@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sprites Pixel Tamagotchi</title>
+    <style>
+        body {
+            font-family: 'Courier New', monospace;
+            background: #1a1a2e;
+            color: white;
+            padding: 20px;
+        }
+        h1 { text-align: center; color: #ff6b9d; }
+        .sprite-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 30px;
+            margin-top: 30px;
+        }
+        .sprite-card {
+            background: #2a2a4e;
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+        }
+        .sprite-card h2 {
+            color: #4aff4a;
+            margin-bottom: 15px;
+        }
+        canvas {
+            border: 4px solid #333;
+            border-radius: 10px;
+            background: #9bbc0f;
+        }
+        .states {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        .state-label {
+            font-size: 12px;
+            color: #aaa;
+        }
+    </style>
+</head>
+<body>
+    <h1>🎨 SPRITES PIXEL TAMAGOTCHI</h1>
+    
+    <div class="sprite-grid">
+        <div class="sprite-card">
+            <h2>🥚 OEUF (Stage 0)</h2>
+            <canvas id="egg" width="128" height="128"></canvas>
+            <p class="state-label">Période d'incubation</p>
+        </div>
+        
+        <div class="sprite-card">
+            <h2>👶 BÉBÉ (Stage 1)</h2>
+            <div class="states">
+                <div>
+                    <canvas id="baby-normal" width="112" height="112"></canvas>
+                    <p class="state-label">Normal</p>
+                </div>
+                <div>
+                    <canvas id="baby-happy" width="112" height="112"></canvas>
+                    <p class="state-label">Heureux</p>
+                </div>
+                <div>
+                    <canvas id="baby-sleep" width="112" height="112"></canvas>
+                    <p class="state-label">Dort</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="sprite-card">
+            <h2>🧒 ENFANT (Stage 2)</h2>
+            <canvas id="child" width="128" height="128"></canvas>
+            <p class="state-label">Évolue après ~30 secondes</p>
+        </div>
+        
+        <div class="sprite-card">
+            <h2>👦 ADO (Stage 3)</h2>
+            <canvas id="teen" width="128" height="128"></canvas>
+            <p class="state-label">Évolue après ~60 secondes</p>
+        </div>
+        
+        <div class="sprite-card">
+            <h2>👤 ADULTE (Stage 4)</h2>
+            <canvas id="adult" width="128" height="128"></canvas>
+            <p class="state-label">Forme finale</p>
+        </div>
+        
+        <div class="sprite-card">
+            <h2>💀 MORT</h2>
+            <canvas id="dead" width="128" height="128"></canvas>
+            <p class="state-label">Si négligé...</p>
+        </div>
+        
+        <div class="sprite-card">
+            <h2>💩 CACA</h2>
+            <canvas id="poop" width="80" height="80"></canvas>
+            <p class="state-label">Jusqu'à 4 max !</p>
+        </div>
+    </div>
+
+<script>
+// Tous les sprites
+const sprites = {
+    egg: [
+        [0,0,1,1,1,1,0,0],
+        [0,1,2,2,2,2,1,0],
+        [1,2,3,3,3,3,2,1],
+        [1,2,3,3,3,3,2,1],
+        [1,2,3,3,3,3,2,1],
+        [1,2,2,3,3,2,2,1],
+        [0,1,2,2,2,2,1,0],
+        [0,0,1,1,1,1,0,0]
+    ],
+    baby: {
+        normal: [
+            [0,0,1,1,1,0,0],
+            [0,1,2,2,2,1,0],
+            [1,2,1,2,1,2,1],
+            [1,2,2,2,2,2,1],
+            [1,2,2,2,2,2,1],
+            [0,1,2,2,2,1,0],
+            [0,0,1,1,1,0,0]
+        ],
+        happy: [
+            [0,0,1,1,1,0,0],
+            [0,1,2,2,2,1,0],
+            [1,2,1,2,1,2,1],
+            [1,2,1,2,1,2,1],
+            [1,2,2,2,2,2,1],
+            [0,1,2,2,2,1,0],
+            [0,0,1,1,1,0,0]
+        ],
+        sleep: [
+            [0,0,1,1,1,0,0],
+            [0,1,2,2,2,1,0],
+            [1,2,2,2,2,2,1],
+            [1,2,2,2,2,2,1],
+            [1,2,2,2,2,2,1],
+            [0,1,2,2,2,1,0],
+            [0,0,1,1,1,0,0]
+        ]
+    },
+    child: [
+        [0,0,1,1,1,1,0,0],
+        [0,1,2,2,2,2,1,0],
+        [1,2,1,2,2,1,2,1],
+        [1,2,2,2,2,2,2,1],
+        [1,2,2,2,2,2,2,1],
+        [1,2,2,2,2,2,2,1],
+        [0,1,2,2,2,2,1,0],
+        [0,0,1,1,1,1,0,0]
+    ],
+    teen: [
+        [0,0,0,1,1,1,1,0,0,0],
+        [0,0,1,2,2,2,2,1,0,0],
+        [0,1,2,2,2,2,2,2,1,0],
+        [1,2,1,2,2,2,2,1,2,1],
+        [1,2,2,2,2,2,2,2,2,1],
+        [1,2,2,2,2,2,2,2,2,1],
+        [0,1,2,2,2,2,2,2,1,0],
+        [0,1,2,2,2,2,2,2,1,0],
+        [0,0,1,1,1,1,1,1,0,0]
+    ],
+    adult: [
+        [0,0,0,0,1,1,1,1,0,0,0,0],
+        [0,0,0,1,2,2,2,2,1,0,0,0],
+        [0,0,1,2,2,2,2,2,2,1,0,0],
+        [0,1,2,1,2,2,2,2,1,2,1,0],
+        [1,2,2,2,2,2,2,2,2,2,2,1],
+        [1,2,2,2,2,2,2,2,2,2,2,1],
+        [1,2,2,2,2,2,2,2,2,2,2,1],
+        [0,1,2,2,2,2,2,2,2,2,1,0],
+        [0,1,2,2,2,2,2,2,2,2,1,0],
+        [0,0,1,1,1,1,1,1,1,1,0,0]
+    ],
+    poop: [
+        [0,1,1,0],
+        [1,2,2,1],
+        [1,2,2,1],
+        [0,1,1,0]
+    ]
+};
+
+const palette = {
+    0: null,
+    1: '#0f380f',
+    2: '#8bac0f',
+    3: '#9bbc0f'
+};
+
+const stageColors = {
+    egg: { 2: '#8bac0f', 3: '#9bbc0f' },
+    baby: { 2: '#ff6b9d', 3: '#ffb8d0' },
+    child: { 2: '#4aff4a', 3: '#8aff8a' },
+    teen: { 2: '#4a9eff', 3: '#8abeff' },
+    adult: { 2: '#ffd700', 3: '#ffea70' },
+    poop: { 2: '#8b4513', 3: '#a0522d' },
+    dead: { 2: '#888888', 3: '#aaaaaa' }
+};
+
+function drawSprite(canvasId, sprite, colorKey) {
+    const canvas = document.getElementById(canvasId);
+    if (!canvas) return;
+    
+    const ctx = canvas.getContext('2d');
+    const scale = canvas.width / sprite[0].length;
+    
+    // Fond
+    ctx.fillStyle = '#9bbc0f';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    
+    // Palette locale
+    const localPalette = { ...palette, ...(stageColors[colorKey] || {}) };
+    
+    // Dessiner sprite
+    for (let y = 0; y < sprite.length; y++) {
+        for (let x = 0; x < sprite[y].length; x++) {
+            const colorIndex = sprite[y][x];
+            if (colorIndex !== 0 && localPalette[colorIndex]) {
+                ctx.fillStyle = localPalette[colorIndex];
+                ctx.fillRect(x * scale, y * scale, scale, scale);
+            }
+        }
+    }
+    
+    // Bordure
+    ctx.strokeStyle = '#0f380f';
+    ctx.lineWidth = 4;
+    ctx.strokeRect(0, 0, canvas.width, canvas.height);
+}
+
+// Dessiner tous les sprites
+drawSprite('egg', sprites.egg, 'egg');
+drawSprite('baby-normal', sprites.baby.normal, 'baby');
+drawSprite('baby-happy', sprites.baby.happy, 'baby');
+drawSprite('baby-sleep', sprites.baby.sleep, 'baby');
+drawSprite('child', sprites.child, 'child');
+drawSprite('teen', sprites.teen, 'teen');
+drawSprite('adult', sprites.adult, 'adult');
+drawSprite('poop', sprites.poop, 'poop');
+
+// Dead = emoji
+document.addEventListener('DOMContentLoaded', () => {
+    const deadCanvas = document.getElementById('dead');
+    if (deadCanvas) {
+        const ctx = deadCanvas.getContext('2d');
+        ctx.fillStyle = '#1a1a2e';
+        ctx.fillRect(0, 0, 128, 128);
+        ctx.font = '60px Arial';
+        ctx.textAlign = 'center';
+        ctx.fillText('💀', 64, 80);
+    }
+});
+</script>
+</body>
+</html>
