@@ -4,23 +4,33 @@ let games;
 
 // Initialisation
 document.addEventListener('DOMContentLoaded', () => {
+    console.log('Pixel Tamagotchi loading...');
+    
     // Créer les instances
-    tama = new Tamagotchi();
-    games = new MiniGames(tama);
-    
-    // Si c'est un oeuf, écran de démarrage
-    if (tama.state === 'egg') {
-        showScreen('start-screen');
-        renderEgg();
-    } else {
-        showScreen('game-screen');
+    try {
+        tama = new Tamagotchi();
+        games = new MiniGames(tama);
+        
+        console.log('Tamagotchi state:', tama.state);
+        
+        // Si c'est un oeuf, écran de démarrage
+        if (tama.state === 'egg') {
+            showScreen('start-screen');
+            renderEgg();
+        } else {
+            showScreen('game-screen');
+        }
+        
+        // Event listeners
+        setupEventListeners();
+        
+        // Démarrer le render loop
+        requestAnimationFrame(renderLoop);
+        
+        console.log('Pixel Tamagotchi loaded successfully!');
+    } catch (e) {
+        console.error('Error loading Tamagotchi:', e);
     }
-    
-    // Event listeners
-    setupEventListeners();
-    
-    // Démarrer le render loop
-    requestAnimationFrame(renderLoop);
 });
 
 // Render loop
