@@ -159,14 +159,21 @@ function renderEgg() {
     const ctx = canvas.getContext('2d');
     
     function animate() {
-        ctx.fillStyle = '#1a1a2e';
-        ctx.fillRect(0, 0, 64, 64);
+        // Fond transparent
+        ctx.clearRect(0, 0, 120, 120);
         
-        const bounce = Math.sin(Date.now() / 400) * 5;
-        ctx.font = '48px Arial';
+        // Ombre
+        ctx.fillStyle = 'rgba(0,0,0,0.3)';
+        ctx.beginPath();
+        ctx.ellipse(60, 100, 30, 10, 0, 0, Math.PI * 2);
+        ctx.fill();
+        
+        // Oeuf qui bounce
+        const bounce = Math.sin(Date.now() / 400) * 10;
+        ctx.font = '80px Arial';
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
-        ctx.fillText('🥚', 32, 32 + bounce);
+        ctx.fillText('🥚', 60, 60 + bounce);
         
         if (document.getElementById('start-screen')?.classList.contains('active')) {
             requestAnimationFrame(animate);
