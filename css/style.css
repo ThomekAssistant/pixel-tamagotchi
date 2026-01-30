@@ -292,6 +292,11 @@ h1 {
     width: 100%;
     height: auto;
     image-rendering: pixelated;
+    image-rendering: -moz-crisp-edges;
+    image-rendering: crisp-edges;
+    background: #9bbc0f;
+    border-radius: 8px;
+    display: block;
 }
 
 /* Thought Bubble */

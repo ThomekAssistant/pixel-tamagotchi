@@ -461,14 +461,38 @@ class Tamagotchi {
     // Render le sprite
     render() {
         const canvas = document.getElementById('game-canvas');
-        if (!canvas || !window.SpriteGenerator) return;
+        if (!canvas) {
+            console.log('Canvas not found');
+            return;
+        }
+
+        // S'assurer que le canvas a la bonne taille
+        if (canvas.width !== 256) canvas.width = 256;
+        if (canvas.height !== 256) canvas.height = 256;
 
         const ctx = canvas.getContext('2d');
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        if (!ctx) {
+            console.log('Could not get 2d context');
+            return;
+        }
 
         // Fond
         ctx.fillStyle = this.isSleeping ? '#1a1a2e' : '#9bbc0f';
         ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        // Dessiner une bordure
+        ctx.strokeStyle = '#0f380f';
+        ctx.lineWidth = 4;
+        ctx.strokeRect(2, 2, 252, 252);
+
+        if (!window.SpriteGenerator) {
+            // Fallback si sprites pas chargés
+            ctx.fillStyle = '#0f380f';
+            ctx.font = '20px monospace';
+            ctx.textAlign = 'center';
+            ctx.fillText('🥚', 128, 140);
+            return;
+        }
 
         if (this.state === 'egg') {
             this.renderEgg(ctx);
