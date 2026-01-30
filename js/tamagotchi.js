@@ -461,46 +461,39 @@ class Tamagotchi {
     // Render le sprite
     render() {
         const canvas = document.getElementById('game-canvas');
-        if (!canvas) {
-            console.log('Canvas not found');
-            return;
-        }
-
-        // S'assurer que le canvas a la bonne taille
-        if (canvas.width !== 256) canvas.width = 256;
-        if (canvas.height !== 256) canvas.height = 256;
+        if (!canvas) return;
 
         const ctx = canvas.getContext('2d');
-        if (!ctx) {
-            console.log('Could not get 2d context');
-            return;
-        }
+        if (!ctx) return;
 
-        // Fond
+        // Fond Game Boy
         ctx.fillStyle = this.isSleeping ? '#1a1a2e' : '#9bbc0f';
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.fillRect(0, 0, 256, 256);
 
-        // Dessiner une bordure
-        ctx.strokeStyle = '#0f380f';
-        ctx.lineWidth = 4;
-        ctx.strokeRect(2, 2, 252, 252);
+        // Emoji selon l'état
+        let emoji = '🥚';
+        if (this.state === 'baby') emoji = '👶';
+        else if (this.state === 'child') emoji = '🧒';
+        else if (this.state === 'teen') emoji = '👦';
+        else if (this.state === 'adult') emoji = '👤';
+        else if (this.state === 'dead') emoji = '👻';
 
-        if (!window.SpriteGenerator) {
-            // Fallback si sprites pas chargés
-            ctx.fillStyle = '#0f380f';
-            ctx.font = '20px monospace';
-            ctx.textAlign = 'center';
-            ctx.fillText('🥚', 128, 140);
-            return;
-        }
+        ctx.font = '120px Arial';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
 
-        if (this.state === 'egg') {
-            this.renderEgg(ctx);
-        } else if (this.state === 'dead') {
-            this.renderGhost(ctx);
-        } else {
-            this.renderTamagotchi(ctx);
-        }
+        // Animation simple
+        const bounce = this.isSleeping ? 0 : Math.sin(Date.now() / 500) * 10;
+        ctx.fillText(emoji, 128, 128 + bounce);
+
+        // Etat
+        ctx.font = '16px monospace';
+        ctx.fillStyle = '#0f380f';
+        let stateText = this.isSleeping ? '💤 DORT' : 
+                       this.isSick ? '🤢 MALADE' :
+                       this.subState === 'happy' ? '😊 HEUREUX' :
+                       this.subState === 'sad' ? '😔 TRISTE' : '';
+        if (stateText) ctx.fillText(stateText, 128, 220);
     }
 
     renderEgg(ctx) {

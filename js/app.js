@@ -154,21 +154,19 @@ function updateUI() {
 // Render l'oeuf sur l'écran de démarrage
 function renderEgg() {
     const canvas = document.getElementById('egg-canvas');
-    if (!canvas || !window.SpriteGenerator) return;
+    if (!canvas) return;
     
     const ctx = canvas.getContext('2d');
-    const sprite = SpriteGenerator.egg;
-    const palette = SpriteGenerator.getPalette('egg');
-    const scale = 4;
     
     function animate() {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.fillStyle = '#1a1a2e';
+        ctx.fillRect(0, 0, 64, 64);
         
-        const offset = Math.sin(Date.now() / 500) * 3;
-        const x = (64 - sprite[0].length * scale) / 2 + offset;
-        const y = (64 - sprite.length * scale) / 2;
-        
-        SpriteGenerator.render(ctx, sprite, palette, x, y, scale);
+        const bounce = Math.sin(Date.now() / 400) * 5;
+        ctx.font = '48px Arial';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText('🥚', 32, 32 + bounce);
         
         if (document.getElementById('start-screen')?.classList.contains('active')) {
             requestAnimationFrame(animate);
