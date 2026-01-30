@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Pixel Tamagotchi - Virtuel pet en pixel art">
+    <title>Pixel Tamagotchi - Virtuel Pet</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="crt-overlay"></div>
+    
+    <!-- Écran de démarrage -->
+    <div id="start-screen" class="screen active">
+        <div class="start-container">
+            <h1 class="glitch" data-text="PIXEL TAMA">PIXEL TAMA</h1>
+            <p class="subtitle">Votre compagnon virtuel pixelisé</p>
+            <div class="egg-preview">
+                <canvas id="egg-canvas" width="64" height="64"></canvas>
+            </div>
+            <button id="start-btn" class="pixel-btn">🥚 FAIRE ÉCLORE</button>
+            <p class="hint">Appuyez pour commencer l'aventure</p>
+        </div>
+    </div>
+
+    <!-- Écran principal du jeu -->
+    <div id="game-screen" class="screen">
+        <div class="device-frame">
+            <!-- Header avec stats -->
+            <div class="status-bar">
+                <div class="stat">
+                    <span class="stat-icon">❤️</span>
+                    <div class="stat-bar"><div id="health-bar" class="fill"></div></div>
+                </div>
+                <div class="stat">
+                    <span class="stat-icon">🍗</span>
+                    <div class="stat-bar"><div id="hunger-bar" class="fill"></div></div>
+                </div>
+                <div class="stat">
+                    <span class="stat-icon">😊</span>
+                    <div class="stat-bar"><div id="happy-bar" class="fill"></div></div>
+                </div>
+                <div class="stat">
+                    <span class="stat-icon">⚡</span>
+                    <div class="stat-bar"><div id="energy-bar" class="fill"></div></div>
+                </div>
+                <div class="stat">
+                    <span class="stat-icon">✨</span>
+                    <div class="stat-bar"><div id="clean-bar" class="fill"></div></div>
+                </div>
+            </div>
+
+            <!-- Zone d'affichage du Tamagotchi -->
+            <div class="tamagotchi-display">
+                <canvas id="game-canvas" width="256" height="256"></canvas>
+                <div id="poop-container"></div>
+                <div id="thought-bubble" class="hidden">
+                    <span class="thought-emoji"></span>
+                </div>
+                <div id="evolution-overlay" class="hidden">
+                    <div class="evolution-text">✨ ÉVOLUTION! ✨</div>
+                </div>
+            </div>
+
+            <!-- Info du Tamagotchi -->
+            <div class="tamagotchi-info">
+                <span id="tamagotchi-name">Bébé</span>
+                <span id="tamagotchi-stage">🥚 Oeuf</span>
+                <span id="tamagotchi-age">Jour 1</span>
+            </div>
+
+            <!-- Boutons d'action -->
+            <div class="controls">
+                <button id="feed-btn" class="action-btn" title="Nourrir">
+                    <span class="btn-icon">🍗</span>
+                    <span class="btn-label">MANGER</span>
+                </button>
+                <button id="play-btn" class="action-btn" title="Jouer">
+                    <span class="btn-icon">🎮</span>
+                    <span class="btn-label">JOUER</span>
+                </button>
+                <button id="sleep-btn" class="action-btn" title="Dormir">
+                    <span class="btn-icon">😴</span>
+                    <span class="btn-label">DORMIR</span>
+                </button>
+                <button id="clean-btn" class="action-btn" title="Nettoyer">
+                    <span class="btn-icon">🧹</span>
+                    <span class="btn-label">NETTOYER</span>
+                </button>
+                <button id="heal-btn" class="action-btn" title="Soigner">
+                    <span class="btn-icon">💊</span>
+                    <span class="btn-label">SOIGNER</span>
+                </button>
+                <button id="stats-btn" class="action-btn" title="Statistiques">
+                    <span class="btn-icon">📊</span>
+                    <span class="btn-label">STATS</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Menu des mini-jeux -->
+        <div id="games-menu" class="modal hidden">
+            <div class="modal-content pixel-border">
+                <h2>🎮 MINI-JEUX</h2>
+                <div class="games-grid">
+                    <button class="game-btn" data-game="memory">
+                        <span class="game-icon">🧠</span>
+                        <span class="game-name">Mémoire</span>
+                    </button>
+                    <button class="game-btn" data-game="reaction">
+                        <span class="game-icon">⚡</span>
+                        <span class="game-name">Réflexes</span>
+                    </button>
+                    <button class="game-btn" data-game="dance">
+                        <span class="game-icon">💃</span>
+                        <span class="game-name">Dance</span>
+                    </button>
+                    <button class="game-btn" data-game="catch">
+                        <span class="game-icon">🎯</span>
+                        <span class="game-name">Attrape</span>
+                    </button>
+                </div>
+                <button id="close-games" class="pixel-btn small">FERMER</button>
+            </div>
+        </div>
+
+        <!-- Modal Statistiques -->
+        <div id="stats-modal" class="modal hidden">
+            <div class="modal-content pixel-border">
+                <h2>📊 STATISTIQUES</h2>
+                <div class="stats-details">
+                    <div class="stat-row">
+                        <span>Nom:</span>
+                        <span id="stats-name">-</span>
+                    </div>
+                    <div class="stat-row">
+                        <span>Stade:</span>
+                        <span id="stats-stage">-</span>
+                    </div>
+                    <div class="stat-row">
+                        <span>Âge:</span>
+                        <span id="stats-age">-</span>
+                    </div>
+                    <div class="stat-row">
+                        <span>Poids:</span>
+                        <span id="stats-weight">-</span>
+                    </div>
+                    <div class="stat-row">
+                        <span>Discipline:</span>
+                        <div class="progress-bar"><div id="discipline-bar" class="fill"></div></div>
+                    </div>
+                    <div class="stat-row">
+                        <span>Niveau:</span>
+                        <span id="stats-level">-</span>
+                    </div>
+                    <div class="stat-row">
+                        <span>Parties jouées:</span>
+                        <span id="stats-games">-</span>
+                    </div>
+                </div>
+                <button id="close-stats" class="pixel-btn small">FERMER</button>
+            </div>
+        </div>
+
+        <!-- Modal Nourriture -->
+        <div id="food-menu" class="modal hidden">
+            <div class="modal-content pixel-border">
+                <h2>🍗 NOURRITURE</h2>
+                <div class="food-grid">
+                    <button class="food-btn" data-food="apple" data-hunger="15" data-happy="5">
+                        <span class="food-icon">🍎</span>
+                        <span class="food-name">Pomme</span>
+                        <span class="food-effect">+15🍗 +5😊</span>
+                    </button>
+                    <button class="food-btn" data-food="burger" data-hunger="30" data-happy="10">
+                        <span class="food-icon">🍔</span>
+                        <span class="food-name">Burger</span>
+                        <span class="food-effect">+30🍗 +10😊</span>
+                    </button>
+                    <button class="food-btn" data-food="pizza" data-hunger="40" data-happy="15">
+                        <span class="food-icon">🍕</span>
+                        <span class="food-name">Pizza</span>
+                        <span class="food-effect">+40🍗 +15😊</span>
+                    </button>
+                    <button class="food-btn" data-food="cake" data-hunger="25" data-happy="25">
+                        <span class="food-icon">🍰</span>
+                        <span class="food-name">Gâteau</span>
+                        <span class="food-effect">+25🍗 +25😊</span>
+                    </button>
+                    <button class="food-btn" data-food="medicine" data-health="30">
+                        <span class="food-icon">💊</span>
+                        <span class="food-name">Médicament</span>
+                        <span class="food-effect">+30❤️</span>
+                    </button>
+                </div>
+                <button id="close-food" class="pixel-btn small">FERMER</button>
+            </div>
+        </div>
+
+        <!-- Notification -->
+        <div id="notification" class="notification hidden">
+            <span class="notification-text"></span>
+        </div>
+    </div>
+
+    <!-- Canvas caché pour le rendu des sprites -->
+    <canvas id="sprite-canvas" width="512" height="512" style="display:none;"></canvas>
+
+    <script src="js/sprites.js"></script>
+    <script src="js/tamagotchi.js"></script>
+    <script src="js/games.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
